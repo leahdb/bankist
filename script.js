@@ -137,8 +137,9 @@ const updateUI = function (acc) {
 // Event handlers
 let currentAccount;
 
+//login
 btnLogin.addEventListener("click", function (e) {
-  // Prevent form from submitting
+  //prevent form from submitting
   e.preventDefault();
 
   currentAccount = accounts.find(
@@ -147,17 +148,40 @@ btnLogin.addEventListener("click", function (e) {
   console.log(currentAccount);
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
-    // Display UI and welcome message
+    //display UI and welcome message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(" ")[0]
     }`;
     containerApp.style.opacity = 100;
 
-    // Clear input fields
+    //clear input fields
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
 
-    // Update UI to display the user's info
+    //update UI to display the user's info
     updateUI(currentAccount);
+  }
+});
+
+//money transfer
+btnTransfer.addEventListener("click", function (e) {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    (acc) => acc.username === inputTransferTo.value
+  );
+  inputTransferAmount.value = inputTransferTo.value = "";
+
+  if (
+    amount > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amount &&
+    receiverAcc?.username !== currentAccount.username     //check if all transfer conditions are available
+  ) {
+    
+    currentAccount.movements.push(-amount);    //removing the money from the sender's account
+    receiverAcc.movements.push(amount);        //adding the money to the receiver's account
+
+    updateUI(currentAccount);    //re-do the calculations
   }
 });
