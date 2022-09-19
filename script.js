@@ -93,8 +93,15 @@ const displayMovements = function (movements, sort = false) {
   });
 };
 
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${acc.balance}€`;
+};
+
 const updateUI = function (acc) {
-  displayMovements(acc.movements); // Display movements
+  displayMovements(acc.movements); //Display movements
+  
+  calcDisplayBalance(acc);     //calculate and display balance
 };
 
 // Event handlers
