@@ -101,7 +101,7 @@ const displayMovements = function (movements, sort = false) {
 };
 
 const calcDisplayBalance = function (acc) {
-  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);   //accumulated result of the function
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0); //accumulated result of the function
   labelBalance.textContent = `${acc.balance}€`;
 };
 
@@ -128,10 +128,10 @@ const calcDisplaySummary = function (acc) {
 
 const updateUI = function (acc) {
   displayMovements(acc.movements); //Display movements
-  
-  calcDisplayBalance(acc);     //calculate and display balance
 
-  calcDisplaySummary(acc);    //calculate and display the summary
+  calcDisplayBalance(acc); //calculate and display balance
+
+  calcDisplaySummary(acc); //calculate and display the summary
 };
 
 // Event handlers
@@ -145,7 +145,6 @@ btnLogin.addEventListener("click", function (e) {
   currentAccount = accounts.find(
     (acc) => acc.username === inputLoginUsername.value
   );
-  console.log(currentAccount);
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
     //display UI and welcome message
@@ -176,12 +175,28 @@ btnTransfer.addEventListener("click", function (e) {
     amount > 0 &&
     receiverAcc &&
     currentAccount.balance >= amount &&
-    receiverAcc?.username !== currentAccount.username     //check if all transfer conditions are available
+    receiverAcc?.username !== currentAccount.username //check if all transfer conditions are available
   ) {
-    
-    currentAccount.movements.push(-amount);    //removing the money from the sender's account
-    receiverAcc.movements.push(amount);        //adding the money to the receiver's account
+    currentAccount.movements.push(-amount); //add the amount to the out of the sender's account
+    receiverAcc.movements.push(amount); //adding the money to the in of receiver's account
 
-    updateUI(currentAccount);    //re-do the calculations
+    updateUI(currentAccount); //re-do the calculations
   }
+});
+
+//request loan
+btnLoan.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (
+    amount > 0 &&
+    currentAccount.movements.some((mov) => mov >= amount * 0.1) //check if any deposit > 10% of request
+  ) {
+    currentAccount.movements.push(amount); //loan added
+
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = "";
 });
