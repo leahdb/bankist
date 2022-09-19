@@ -72,7 +72,30 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts); //create username for each account
 
-const updateUI = function (acc) {};
+const displayMovements = function (movements, sort = false) {
+  containerMovements.innerHTML = "";
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements; //sort in asc order
+
+  movs.forEach(function (mov, i) {
+    const type = mov > 0 ? "deposit" : "withdrawal";
+
+    const html = `
+      <div class="movements__row">
+        <div class="movements__type movements__type--${type}">${
+      i + 1
+    } ${type}</div>
+        <div class="movements__value">${mov}€</div>
+      </div>
+    `;
+
+    containerMovements.insertAdjacentHTML("afterbegin", html);
+  });
+};
+
+const updateUI = function (acc) {
+  displayMovements(acc.movements); // Display movements
+};
 
 // Event handlers
 let currentAccount;
@@ -87,7 +110,7 @@ btnLogin.addEventListener("click", function (e) {
   console.log(currentAccount);
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
-    // Display UI and message
+    // Display UI and welcome message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(" ")[0]
     }`;
@@ -97,7 +120,7 @@ btnLogin.addEventListener("click", function (e) {
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
 
-    // Update UI
+    // Update UI to display the user's info
     updateUI(currentAccount);
   }
 });
